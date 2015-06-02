@@ -12,8 +12,10 @@
     //var_dump($_GET);
     
     //default month and year
-    $month = 1;
-    $year = 2015;
+    $month = date('n');
+    $year = date('Y');
+    
+    
     
     // Override default month and year from url vars if they're present
     if( isset($_GET["month"]) && isset($_GET["year"]) ){
@@ -24,7 +26,7 @@
     //setup timestamp variables
     $start_month = mktime(0, 0, 0, $month, 1, $year);
     $display_date = date("F Y",$start_month);
-    var_dump($display_date);
+    //var_dump($display_date);
     
     
     //create connection to MySQL database
@@ -47,7 +49,7 @@
     
     <?php
     echo "  <tr>\n";
-    echo "    <th>$month $year</th>\n";
+    echo "    <th> $display_date </th>\n";
     
     //populate days of the month header
     for($day=1;$day< $days_in_month;$day++){
