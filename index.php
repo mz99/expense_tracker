@@ -32,15 +32,20 @@
         or die('Error connecting to MySQL server.');
 
     //create variables with mock data to populate table    
-                
     $day = 1;
     $days_in_month = 31;
-    $month = "May";
-    $year = "2015";
+  
    
     //create month & days general header
-    echo "<h1 id=box1> < $display_date  > expenses</h1>";
-    echo "<table> \n";
+    ?>
+    <h1 id=box1>
+        <a href="?month=<?php echo $month - 1; ?>&year=2015"> < </a> 
+        <?php echo $display_date; ?>  
+        <a href="?month=<?php echo $month + 1; ?>&year=2015"> > </a>  expenses
+    </h1>
+    <table>    
+    
+    <?php
     echo "  <tr>\n";
     echo "    <th>$month $year</th>\n";
     
