@@ -1,4 +1,4 @@
-<!doctype>
+<!doctype> 
 <html>
 <head>
 <title>Expense tracker</title>
@@ -7,11 +7,12 @@
 </head>
 <body>
 <?php
-    //create connection to MySQL database
-    $dbc = mysqli_connect('localhost','root','p2jxsb6c')
-        or die('Error connecting to MySQL server.');
-    mysqli_select_db($dbc, 'Expense');
+    //Display all errors
+    error_reporting(E_ALL);
     
+    //create connection to MySQL database
+    $dbc = mysqli_connect('localhost','root','p2jxsb6c','Expense')
+        or die('Error connecting to MySQL server.');
 
     //create variables with mock data to populate table
                 
@@ -27,37 +28,46 @@
     echo "    <th>$month $year</th>\n";
     
     //populate days of the month header
-    while ($day < $days_in_month){
-        echo "    <td id=$day>$day</td>\n";
-        $day = $day + 1;
+    for($day=1;$day< $days_in_month;$day++){
+        echo "    <td>$day</td>\n";       
     };
+    echo "<th>totals</th>";
     echo "</tr>\n";       
     
     //create Eating Out category row
     echo "<tr>\n";
     echo "<th>Eating Out</th>\n";
-         
-    $query_eating = "SELECT id,date,amount FROM Expense where type like 'Eating Out%'";
-    $result_eating = mysqli_query($dbc, $query_eating)
-        or die("that didn't work");
     
-    //left off needing to make comparison between $day and $row['id'] in order to know which days to populate for amount 
-    $day = 1;
-   
-    while ($day < $days_in_month){  
-
+    //use this function in the future to lessen code for below     
+    function get_expenses_for_day($date, $type) {
+        // Do SQL to get expense from database for day :)
+        return "";
+    }
+    
+    //Create Eating out category row 
+    for($day=1; $day<$days_in_month; $day++){  
+        
+        // SELECT SUM(amount) as total_amount FROM Expense where type like 'Eating Out%' AND date = "2015-05-25" GROUP BY date
         $query_eating = "SELECT SUM(amount) as total_amount FROM Expense where type like 'Eating Out%' AND date = '" . 
-        date("Y-m-d", mktime(0, 0, 0, 5, $day, 2015)). 
-        "' GROUP BY date;";
+            date("Y-m-d", mktime(0, 0, 0, 5, $day, 2015)). 
+            "' GROUP BY date;";
         $result_eating = mysqli_query($dbc, $query_eating) or die("that didn't work" + mysqli_error($dbc));
         $row = mysqli_fetch_array($result_eating);  
 
-        echo "    <td id=$day>" . $row["total_amount"] . "</td>\n"; 
-        $day = $day + 1;                                   
+        echo "    <td>" . $row["total_amount"] . "</td>\n";                                          
     };
+   
+    //Create Eating out totals row
+        $query_eating_totals = "SELECT SUM(amount) as total_amount FROM Expense where (type like 'Eating Out%') AND (date between '2015-05-01' AND '2015-05-31')";           
+        $result_eating_totals = mysqli_query($dbc, $query_eating_totals) or die("that didn't work" + mysqli_error($dbc));
+        $row = mysqli_fetch_array($result_eating_totals);  
+        echo "    <th>" . $row["total_amount"] . "</th>\n";
+                  
     echo "</tr>\n";
     
-    //create Hostel category row
+   
+     
+    //Create Hostel category row
     echo "<tr>\n";
     echo "<th>Hostel</th>\n";
     
@@ -65,9 +75,9 @@
     $result_hostel = mysqli_query($dbc, $query_hostel)
         or die("that didn't work");
     
-    $day = 0;
     
-    while ($day < $days_in_month){
+    
+    for ($day=1; $day<$days_in_month; $day++){
     
     $query_eating = "SELECT SUM(amount) as total_amount FROM Expense where type like 'Hostel' AND date = '" . 
         date("Y-m-d", mktime(0, 0, 0, 5, $day, 2015)). 
@@ -75,11 +85,10 @@
         $result_eating = mysqli_query($dbc, $query_eating) or die("that didn't work" + mysqli_error($dbc));
         $row = mysqli_fetch_array($result_eating);  
 
-        echo "    <td id=$day>" . $row["total_amount"] . "</td>\n"; 
+        echo "    <td>" . $row["total_amount"] . "</td>\n"; 
         $day = $day + 1;  
     
-        $row = mysqli_fetch_array($result_hostel);
-           
+        $row = mysqli_fetch_array($result_hostel);           
     }
     
     echo "</tr>\n";
