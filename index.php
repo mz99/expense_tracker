@@ -9,12 +9,29 @@
 <?php
     //Display all errors
     error_reporting(E_ALL);
+    //var_dump($_GET);
+    
+    //default month and year
+    $month = 1;
+    $year = 2015;
+    
+    // Override default month and year from url vars if they're present
+    if( isset($_GET["month"]) && isset($_GET["year"]) ){
+        $month = $_GET["month"];
+        $year = $_GET["year"];
+    }
+    
+    //setup timestamp variables
+    $start_month = mktime(0, 0, 0, $month, 1, $year);
+    $display_date = date("F Y",$start_month);
+    var_dump($display_date);
+    
     
     //create connection to MySQL database
     $dbc = mysqli_connect('localhost','root','p2jxsb6c','Expense')
         or die('Error connecting to MySQL server.');
 
-    //create variables with mock data to populate table
+    //create variables with mock data to populate table    
                 
     $day = 1;
     $days_in_month = 31;
@@ -22,7 +39,7 @@
     $year = "2015";
    
     //create month & days general header
-    echo "<h1 id=box1>$month $year expenses</h1>";
+    echo "<h1 id=box1> < $display_date  > expenses</h1>";
     echo "<table> \n";
     echo "  <tr>\n";
     echo "    <th>$month $year</th>\n";
@@ -95,10 +112,7 @@
     echo "</table>";
     mysqli_close($dbc);
     
-    //left off needing to:
-    //1) sum all same day, same category values inside server and display as a rolled up total
-    //2) look into how to link day of expense to proper date on calendar
-    //3) php date functions, can we populate <td id=$day> to 
+    
 ?>
 </body>
 </html>
