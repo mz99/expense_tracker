@@ -6,17 +6,15 @@
 <script type="text/javascript" src="hello.js"></script>
 </head>
 <body>
+
 <?php
     //Display all errors
-    error_reporting(E_ALL);
-    //var_dump($_GET);
+    error_reporting(E_ALL);        
     
-    //default month and year
+    //Get current month and year
     $month = date('n');
     $year = date('Y');
-    
-    
-    
+            
     // Override default month and year from url vars if they're present
     if( isset($_GET["month"]) && isset($_GET["year"]) ){
         $month = $_GET["month"];
@@ -25,9 +23,7 @@
     
     //setup timestamp variables
     $start_month = mktime(0, 0, 0, $month, 1, $year);
-    $display_date = date("F Y",$start_month);
-    //var_dump($display_date);
-    
+    $display_date = date("F Y",$start_month);    
     
     //create connection to MySQL database
     $dbc = mysqli_connect('localhost','root','p2jxsb6c','Expense')
@@ -35,9 +31,8 @@
 
     //create variables with mock data to populate table    
     $day = 1;
-    $days_in_month = 31;
+    $days_in_month = date('t');
   
-   
     //create month & days general header
     ?>
     <h1 id=box1>
@@ -73,7 +68,7 @@
         
         // SELECT SUM(amount) as total_amount FROM Expense where type like 'Eating Out%' AND date = "2015-05-25" GROUP BY date
         $query_eating = "SELECT SUM(amount) as total_amount FROM Expense where type like 'Eating Out%' AND date = '" . 
-            date("Y-m-d", mktime(0, 0, 0, 5, $day, 2015)). 
+            date("Y-m-d", mktime(0, 0, 0, $month, $day, $year)). 
             "' GROUP BY date;";
         $result_eating = mysqli_query($dbc, $query_eating) or die("that didn't work" + mysqli_error($dbc));
         $row = mysqli_fetch_array($result_eating);  
@@ -89,8 +84,7 @@
                   
     echo "</tr>\n";
     
-   
-     
+      
     //Create Hostel category row
     echo "<tr>\n";
     echo "<th>Hostel</th>\n";
@@ -98,13 +92,11 @@
     $query_hostel = "SELECT id,date,amount FROM Expense where type like 'Hostel'";
     $result_hostel = mysqli_query($dbc, $query_hostel)
         or die("that didn't work");
-    
-    
-    
+        
     for ($day=1; $day<$days_in_month; $day++){
     
     $query_eating = "SELECT SUM(amount) as total_amount FROM Expense where type like 'Hostel' AND date = '" . 
-        date("Y-m-d", mktime(0, 0, 0, 5, $day, 2015)). 
+        date("Y-m-d", mktime(0, 0, 0, $month, $day, $year)). 
         "' GROUP BY date;";
         $result_eating = mysqli_query($dbc, $query_eating) or die("that didn't work" + mysqli_error($dbc));
         $row = mysqli_fetch_array($result_eating);  
@@ -118,8 +110,7 @@
     echo "</tr>\n";
     echo "</table>";
     mysqli_close($dbc);
-    
-    
+        
 ?>
 </body>
 </html>
