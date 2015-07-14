@@ -22,8 +22,9 @@
     }
     
     //setup timestamp variables
-    $start_month = mktime(0, 0, 0, $month, 1, $year);
-    $display_date = date("F Y",$start_month);    
+    $start_date = mktime(0, 0, 0, $month, 1, $year);
+    $display_date = date("F Y",$start_date);    
+   
     
     //create connection to MySQL database
     $dbc = mysqli_connect('localhost','root','p2jxsb6c','Expense')
@@ -31,23 +32,34 @@
 
     //create variables with mock data to populate table    
     $day = 1;
-    $days_in_month = date('t');
-  
-    //create month & days general header
-    ?>
-    <h1 id=box1>
-        <a href="?month=<?php echo $month - 1; ?>&year=2015"> < </a> 
-        <?php echo $display_date; ?>  
-        <a href="?month=<?php echo $month + 1; ?>&year=2015"> > </a>  expenses
-    </h1>
-    <table>    
+    $days_in_month = date('t',$start_date);
+    $beg_date = date("Y-m-d",$start_date);
+    $end_date = date("Y",$start_date) . "-" . date("m",$start_date) . "-" . date("t",$start_date);
     
+    echo 'show me what mktime does  ' . $start_date;
+    echo '<br> show me what date("F Y") does '. $display_date;
+    echo '<br> this is the $month variable: ' . $month;
+    echo '<br> this is the $year variable: ' . $year; 
+    echo '<br> this is how many days in this month date("t",$start_date): ' . $days_in_month;
+    echo '<br> this is the beginning date ($beg_date): ' . $beg_date;
+    echo '<br> this is the ending date($end_date): ' . $end_date; 
+    ?>
+    
+    <!-- create month & days general header -->
+    
+    <h1>
+        <a href="?month=<?php echo $month - 1; ?>&year=<?php echo $year; ?>"> < </a> 
+        <?php echo $display_date; ?>  
+        <a href="?month=<?php echo $month + 1; ?>&year=<?php echo $year; ?>"> > </a>  Expenses
+    </h1>
+    
+    <table>    
     <?php
     echo "  <tr>\n";
     echo "    <th> $display_date </th>\n";
     
     //populate days of the month header
-    for($day=1;$day< $days_in_month;$day++){
+    for($day=1; $day<$days_in_month+1;$day++){
         echo "    <td>$day</td>\n";       
     };
     echo "<th>totals</th>";
@@ -57,16 +69,14 @@
     echo "<tr>\n";
     echo "<th>Eating Out</th>\n";
     
-    //use this function in the future to lessen code for below     
+    //create function to query a category    
     function get_expenses_for_day($date, $type) {
         // Do SQL to get expense from database for day :)
         return "";
     }
     
     //Create Eating out category row 
-    for($day=1; $day<$days_in_month; $day++){  
-        
-        // SELECT SUM(amount) as total_amount FROM Expense where type like 'Eating Out%' AND date = "2015-05-25" GROUP BY date
+    for($day=1; $day<$days_in_month+1; $day++){  
         $query_eating = "SELECT SUM(amount) as total_amount FROM Expense where type like 'Eating Out%' AND date = '" . 
             date("Y-m-d", mktime(0, 0, 0, $month, $day, $year)). 
             "' GROUP BY date;";
@@ -77,11 +87,10 @@
     };
    
     //Create Eating out totals row
-        $query_eating_totals = "SELECT SUM(amount) as total_amount FROM Expense where (type like 'Eating Out%') AND (date between '2015-05-01' AND '2015-05-31')";           
-        $result_eating_totals = mysqli_query($dbc, $query_eating_totals) or die("that didn't work" + mysqli_error($dbc));
-        $row = mysqli_fetch_array($result_eating_totals);  
-        echo "    <th>" . $row["total_amount"] . "</th>\n";
-                  
+    $query_eating_totals = "SELECT SUM(amount) as total_amount FROM Expense where (type like 'Eating Out%') AND (date between '".     $beg_date . "' AND '". $end_date . "')";           
+    $result_eating_totals = mysqli_query($dbc, $query_eating_totals) or die("that didn't work" + mysqli_error($dbc));
+    $row = mysqli_fetch_array($result_eating_totals);  
+    echo "    <th>" . $row["total_amount"] . "</th>\n";
     echo "</tr>\n";
     
       
@@ -93,9 +102,8 @@
     $result_hostel = mysqli_query($dbc, $query_hostel)
         or die("that didn't work");
         
-    for ($day=1; $day<$days_in_month; $day++){
-    
-    $query_eating = "SELECT SUM(amount) as total_amount FROM Expense where type like 'Hostel' AND date = '" . 
+    for ($day=1; $day<$days_in_month+1; $day++){
+        $query_eating = "SELECT SUM(amount) as total_amount FROM Expense where type like 'Hostel' AND date = '" . 
         date("Y-m-d", mktime(0, 0, 0, $month, $day, $year)). 
         "' GROUP BY date;";
         $result_eating = mysqli_query($dbc, $query_eating) or die("that didn't work" + mysqli_error($dbc));
@@ -110,8 +118,30 @@
     echo "</tr>\n";
     echo "</table>";
     mysqli_close($dbc);
-        
 ?>
+
+<?php
+    echo '<form name="update" method="post" action="day_amount.php">';
+    echo '  <select name="day">';
+    
+    for ($day=1; $day<$days_in_month+1; $day++){
+        echo "<option value=$day>$day</option><br/>";
+    }                    
+    echo '</select>';
+    echo '<select name="category">';
+        echo '<option value="Eating out">Eating Out</option>';
+        echo '<option value="Hostel">Hostel</option>';
+    echo '</select><br/>';
+    echo 'Please enter the amount';
+    echo '<br/><input type="text" name="amount">';
+    
+    
+    echo "<br/><input type='text' id='hide' name='month' value=$month>";
+    echo "<br/><input type='text' id='hide' name='year' value=$year>";      
+    echo '<input id="button" type="submit">';
+    echo '</form>';
+?>
+
+
 </body>
 </html>
-
