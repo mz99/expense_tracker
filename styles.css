@@ -1,41 +1,11 @@
-#box1{
-    text-align:center;
-    position:relative;
-    top: 20px;
-    
+#hide {
+    visibility: hidden;
 }
 
-#one{
-    position:relative;
-    width:170px;
-    height:100px;
-    background-color:grey;
+#button {
+    float: left;
 }
 
-#two{
-    position:relative;
-    width:170px;
-    height:100px;
-    background-color:grey;
-    bottom: 120px;
-    left: 180px;
+h1 {
+    text-align: center;
 }
-
-#three{
-    position:relative;
-    width:170px;
-    height:100px;
-    background-color:grey;
-    bottom: 240px;
-    left: 380px;
-}
-
-#four{
-    position:fixed;
-    width:170px;
-    height:100px;
-    background-color:grey;
-    bottom: 240px;
-    
-}
-

@@ -27,7 +27,7 @@
    
     
     //create connection to MySQL database
-    $dbc = mysqli_connect('localhost','root','p2jxsb6c','Expense')
+    $dbc = mysqli_connect('localhost','root','admin','Expense')
         or die('Error connecting to MySQL server.');
 
     //create variables with mock data to populate table    
@@ -70,21 +70,28 @@
     echo "<th>Eating Out</th>\n";
     
     //create function to query a category    
-    function get_expenses_for_day($date, $type) {
-        // Do SQL to get expense from database for day :)
-        return "";
+    function get_expenses_for($type) {
+        for($day=1; $day<$days_in_month+1; $day++){  
+             $query_eating = "SELECT SUM(amount) as total_amount FROM Expense where type like '". $type ."%' AND date = '" . 
+             date("Y-m-d", mktime(0, 0, 0, $month, $day, $year)) . "' GROUP BY date;";
+             $result_eating = mysqli_query($dbc, $query_eating) or die("that didn't work" + mysqli_error($dbc));
+             $row = mysqli_fetch_array($result_eating);  
+
+             echo "    <td>" . $row["total_amount"] . "</td>\n"; 
+        return ""; 
+        }
     }
+    get_expenses_for(EatingOut);
     
-    //Create Eating out category row 
+    /*Create Eating out category row 
     for($day=1; $day<$days_in_month+1; $day++){  
-        $query_eating = "SELECT SUM(amount) as total_amount FROM Expense where type like 'Eating Out%' AND date = '" . 
-            date("Y-m-d", mktime(0, 0, 0, $month, $day, $year)). 
-            "' GROUP BY date;";
+       $query_eating = "SELECT SUM(amount) as total_amount FROM Expense where type like 'Eating Out%' AND date = '" . 
+            date("Y-m-d", mktime(0, 0, 0, $month, $day, $year)) . "' GROUP BY date;";
         $result_eating = mysqli_query($dbc, $query_eating) or die("that didn't work" + mysqli_error($dbc));
         $row = mysqli_fetch_array($result_eating);  
 
         echo "    <td>" . $row["total_amount"] . "</td>\n";                                          
-    };
+    };*/
    
     //Create Eating out totals row
     $query_eating_totals = "SELECT SUM(amount) as total_amount FROM Expense where (type like 'Eating Out%') AND (date between '".     $beg_date . "' AND '". $end_date . "')";           
@@ -144,4 +151,4 @@
 
 
 </body>
-</html>
+</html> 
