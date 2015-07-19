@@ -36,13 +36,7 @@
     $beg_date = date("Y-m-d",$start_date);
     $end_date = date("Y",$start_date) . "-" . date("m",$start_date) . "-" . date("t",$start_date);
     
-    echo 'show me what mktime does  ' . $start_date;
-    echo '<br> show me what date("F Y") does '. $display_date;
-    echo '<br> this is the $month variable: ' . $month;
-    echo '<br> this is the $year variable: ' . $year; 
-    echo '<br> this is how many days in this month date("t",$start_date): ' . $days_in_month;
-    echo '<br> this is the beginning date ($beg_date): ' . $beg_date;
-    echo '<br> this is the ending date($end_date): ' . $end_date; 
+   
     ?>
     
     <!-- create month & days general header -->
@@ -69,7 +63,7 @@
     echo "<tr>\n";
     echo "<th>Eating Out</th>\n";
     
-    //create function to query a category    
+    /*//create function to query a category    
     function get_expenses_for($type) {
         for($day=1; $day<$days_in_month+1; $day++){  
              $query_eating = "SELECT SUM(amount) as total_amount FROM Expense where type like '". $type ."%' AND date = '" . 
@@ -81,9 +75,9 @@
         return ""; 
         }
     }
-    get_expenses_for(EatingOut);
+    get_expenses_for(EatingOut);*/
     
-    /*Create Eating out category row 
+    //Create Eating out category row 
     for($day=1; $day<$days_in_month+1; $day++){  
        $query_eating = "SELECT SUM(amount) as total_amount FROM Expense where type like 'Eating Out%' AND date = '" . 
             date("Y-m-d", mktime(0, 0, 0, $month, $day, $year)) . "' GROUP BY date;";
@@ -91,7 +85,7 @@
         $row = mysqli_fetch_array($result_eating);  
 
         echo "    <td>" . $row["total_amount"] . "</td>\n";                                          
-    };*/
+    };
    
     //Create Eating out totals row
     $query_eating_totals = "SELECT SUM(amount) as total_amount FROM Expense where (type like 'Eating Out%') AND (date between '".     $beg_date . "' AND '". $end_date . "')";           
